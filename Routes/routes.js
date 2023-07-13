@@ -40,7 +40,7 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.post("/forget-password", async (req, res) => {
+router.post("/resetPassword", async (req, res) => {
   const { Email } = req.body;
   const user = await model.findOne({ Email });
   if (!user) {
