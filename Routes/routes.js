@@ -51,6 +51,7 @@ router.post("/login", async (req, res) => {
   res.json({ user, token });
 });
 
+const shortid = require('shortid');
 
 router.post("/resetpassword", async (req, res) => {
   const { Email } = req.body;
@@ -60,9 +61,7 @@ router.post("/resetpassword", async (req, res) => {
   }
   
   // Generate reset token
-  const resetToken = jwt.sign({ Id: user._id }, process.env.secert_key, {
-    expiresIn: "1h",
-  });
+  const resetToken = shortid.generate();
   console.log(resetToken);
 
   // Send reset token via email
@@ -93,6 +92,7 @@ router.post("/resetpassword", async (req, res) => {
     res.status(200).json({ message: "Password reset token sent", resetToken }); 
   });
 });
+
 
 
 router.post("/savepassword", async (req, res) => {
