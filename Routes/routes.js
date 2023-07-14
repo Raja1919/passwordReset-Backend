@@ -93,7 +93,7 @@ router.post("/resetpassword", async (req, res) => {
 });
 
 
-router.post("/save-new-password/:token", async (req, res) => {
+router.post("/savepassword", async (req, res) => {
   const { NewPassword, ConfirmPassword } = req.body;
   const resetToken=req.params.token;
   // Verify reset token
