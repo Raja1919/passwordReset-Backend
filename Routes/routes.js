@@ -94,7 +94,7 @@ router.post("/resetpassword", async (req, res) => {
 
 
 router.post("/savepassword", async (req, res) => {
-  const { NewPassword, ConfirmPassword,resetToken } = req.body;
+  const { NewPassword,resetToken } = req.body;
   // Verify reset token
   try {
     const decoded = jwt.verify(resetToken, process.env.secert_key);
@@ -106,9 +106,6 @@ router.post("/savepassword", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (NewPassword !== ConfirmPassword) {
-      return res.status(400).json({ message: "Passwords do not match" });
-    }
 
     const hashedNewPassword = await bcrypt.hash(NewPassword, 10);
     user.Password = hashedNewPassword;
