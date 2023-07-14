@@ -6,6 +6,15 @@ const jwt=require ("jsonwebtoken")
 const nodemailer=require("nodemailer")
 const router = express.Router();
 
+
+router.get("/users", async (req, res) => {
+  const user = await model.find();
+  if (!user) {
+    return res.status(404).json({ message: "not found" });
+  }
+  res.status(200).json(user);
+});
+
 router.post("/signup", async (req, res) => {
   const {Name, Email, Password } = req.body;
   const user = await model.findOne({ Email });
