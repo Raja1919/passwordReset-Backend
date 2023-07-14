@@ -51,7 +51,6 @@ router.post("/login", async (req, res) => {
   res.json({ user, token });
 });
 
-const shortid = require('shortid');
 
 router.post("/resetpassword", async (req, res) => {
   const { Email } = req.body;
