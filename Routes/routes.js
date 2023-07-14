@@ -29,6 +29,7 @@ router.post("/signup", async (req, res) => {
   }
   res.status(404).json({ message: "user Already exist" });
 });
+
 router.post("/login", async (req, res) => {
   const { Email, Password } = req.body;
 
@@ -49,7 +50,7 @@ router.post("/login", async (req, res) => {
 });
 
 
-router.post("/resetPassword", async (req, res) => {
+router.post("/resetpassword", async (req, res) => {
   const { Email } = req.body;
   const user = await model.findOne({ Email });
   if (!user) {
@@ -78,7 +79,7 @@ router.post("/resetPassword", async (req, res) => {
     text: `HI ${user.Name},
     There was a request to change your password!
     If you did not make this request, please ignore this email.
-    Otherwise, please click this link to change your password: http://localhost:3000/save-new-password/${resetToken}`,
+    Otherwise, please click this link to change your password: http://localhost:3000/save-new-password?token=${resetToken}`,
   };
 
   transporter.sendMail(mailOptions, (error, info) => {
