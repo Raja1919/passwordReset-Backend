@@ -2,7 +2,7 @@ const jwt=require ("jsonwebtoken")
 
 const generateToken=(id)=>jwt.sign(
     {id},
-    process.env.secert_key,
+    process.env.SECRET_KEY,
     {expiresIn:"20d"}
 
 )

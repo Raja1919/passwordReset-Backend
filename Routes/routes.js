@@ -2,12 +2,10 @@ const express = require("express");
 const model = require("../model/model");
 const bcrypt = require("bcrypt");
 const generateToken = require("../GenToken");
-const jwt=require ("jsonwebtoken")
-const nodemailer=require("nodemailer")
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const router = express.Router();
-const shortid = require('shortid');
-
-
+const shortid = require("shortid");
 
 router.get("/users", async (req, res) => {
   const user = await model.find();
@@ -18,12 +16,12 @@ router.get("/users", async (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  const {Name, Email, Password } = req.body;
+  const { Name, Email, Password } = req.body;
   const user = await model.findOne({ Email });
   if (!user) {
     const hashedPassword = await bcrypt.hash(Password, 10);
 
-    const newUser = new model({ Name,Email,Password: hashedPassword });
+    const newUser = new model({ Name, Email, Password: hashedPassword });
 
     await newUser.save();
 
@@ -51,29 +49,28 @@ router.post("/login", async (req, res) => {
   res.json({ user, token });
 });
 
-
 router.post("/resetpassword", async (req, res) => {
   const { Email } = req.body;
   const user = await model.findOne({ Email });
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
-  
-  // Generate reset token
-  const resetToken = shortid.generate();
-  console.log(resetToken);
+
+  const resetToken = jwt.sign({ Id: user._id }, process.env.SECRET_KEY, {
+    expiresIn: "1h",
+  });
 
   // Send reset token via email
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.email,
-      pass: process.env.password,
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
     },
   });
 
   const mailOptions = {
-    from: process.env.email,
+    from: process.env.EMAIL,
     to: user.Email,
     subject: "Password Reset",
     text: `HI ${user.Name},
@@ -88,25 +85,22 @@ router.post("/resetpassword", async (req, res) => {
       return res.status(500).json({ message: "Error sending email" });
     }
     console.log("Reset token email sent:", info.response);
-    res.status(200).json({ message: "Password reset token sent", resetToken }); 
+    res.status(200).json({ message: "Password reset token sent", resetToken });
   });
 });
 
-
-
 router.post("/savepassword", async (req, res) => {
-  const { NewPassword,resetToken } = req.body;
+  const { NewPassword, resetToken } = req.body;
   // Verify reset token
   try {
-    const decoded = jwt.verify(resetToken, process.env.secert_key);
+    const decoded = jwt.verify(resetToken, process.env.SECRET_KEY);
+
     const userId = decoded.Id;
     const user = await model.findById(userId);
-    console.log(user)
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
 
     const hashedNewPassword = await bcrypt.hash(NewPassword, 10);
     user.Password = hashedNewPassword;
@@ -118,6 +112,5 @@ router.post("/savepassword", async (req, res) => {
     res.status(400).json({ message: "Invalid reset token" });
   }
 });
-
 
 module.exports = router;

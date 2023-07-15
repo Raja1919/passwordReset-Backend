@@ -5,7 +5,7 @@ const routes=require("./Routes/routes");
 const cors=require("cors")
 
 
-const port=process.env.port
+const PORT=process.env.PORT
 
 const app=express();
 
@@ -18,7 +18,7 @@ app.use('/api',routes)
 
 
 // connect to mongodb
-const url=process.env.mongo_url
+const url=process.env.MONGO_URL
 
 mongoose.set("strictQuery",false);
 
@@ -31,4 +31,4 @@ mongoose.connect(url)
 
 
 
-app.listen(port,()=>console.log(`server started localHost:${port}`))
+app.listen(PORT,()=>console.log(`server started localHost:${PORT}`))
